@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import NewsItem from "./NewsItem";
 import Spinner from "./Loader";
 import PropTypes from "prop-types";
@@ -25,7 +25,7 @@ const News = (props) => {
   //   async componentDidMount() {
   //     try {
   //       const url =
-  //         "https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=9006faa499084e6a89439e593c882f47";
+  //         "https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey={process.env.API_KEY}";
   //       const respe = await fetch(url);
   //       const data = await respe.json();
   //       this.setState({ articles: data.articles });
@@ -33,10 +33,10 @@ const News = (props) => {
   //       console.log(error, "error");
   //     }
   //   }
-  const handleRequest = () => {
+  const handleRequest = useCallback(() => {
     props.setProgress(20);
     setLoading({ loading: true });
-    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=9006faa499084e6a89439e593c882f47&pageSize=${props.calculatePageSize}`;
+    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey={process.env.API_KEY}&pageSize=${props.calculatePageSize}`;
     fetch(url)
       .then((response) => {
         // console.log(response);
@@ -55,11 +55,11 @@ const News = (props) => {
       .catch((error) => {
         console.log(error, "error");
       });
-  };
+  }, [props]);
   useEffect(() => {
     document.title = `News - ${props.category}`;
     handleRequest();
-  }, []);
+  }, [handleRequest, props.category]);
 
   // handleNextClick = () => {
   //   if (
@@ -87,7 +87,7 @@ const News = (props) => {
     setPage({ page: page + 1 });
 
     setLoading({ loading: true });
-    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=9006faa499084e6a89439e593c882f47&pageSize=${props.pageSize}&page=${page}`;
+    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey={process.env.API_KEY}&pageSize=${props.pageSize}&page=${page}`;
     fetch(url)
       .then((response) => {
         return response.json();
